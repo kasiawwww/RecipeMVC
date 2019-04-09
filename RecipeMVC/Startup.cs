@@ -57,7 +57,7 @@ namespace RecipeMVC
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
@@ -65,6 +65,11 @@ namespace RecipeMVC
 
             app.UseMvc(routes =>
             {
+                //routes.MapRoute(
+                //   name: "test",
+                //   template: "oAplikacji",
+                //   defaults: new {controller = "Home", action = "About"}
+                //    );
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

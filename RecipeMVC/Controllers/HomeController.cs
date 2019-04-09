@@ -14,7 +14,7 @@ namespace RecipeMVC.Controllers
         {
             return View();
         }
-
+        [Route("oAplikacji")]
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
