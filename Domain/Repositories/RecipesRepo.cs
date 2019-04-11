@@ -1,5 +1,6 @@
 ﻿using Domain.IRepositories;
 using Domain.Models.DTO;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -9,45 +10,117 @@ using System.Threading.Tasks;
 
 namespace Domain.Repositories
 {
-    class RecipesRepo : IRecipesRepo
+    public class RecipesRepo : IRecipesRepo
     {
         HttpClient client = new HttpClient();
+        const string RecipesUri = "Recipes";
         public RecipesRepo()
         {
-            client.BaseAddress = new Uri("http://localhost:26627");
+            client.BaseAddress = new Uri("http://localhost:48791/Api/");
             client.DefaultRequestHeaders
                 .Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Add("api-key", "aaaaaa");
+            client.DefaultRequestHeaders.Add("api-key", "kasia1");
         }
-        public RecipesDTO Add(RecipesDTO item)
+        public async Task<RecipesDTO> Add(RecipesDTO item)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var response = await client.PostAsJsonAsync(RecipesUri, item);
+                if (response.IsSuccessStatusCode)
+                {
+                    return item;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
-        public bool Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var response = await client.DeleteAsync($"{RecipesUri}/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
-        public RecipesDTO Get(int id)
+        public async Task<RecipesDTO> Get(int id)
         {
-            throw new NotImplementedException();
-        }
+            var result = new RecipesDTO();
+            try
+            {
+                var response = await client.GetAsync($"{RecipesUri}/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    result = JsonConvert.DeserializeObject<RecipesDTO>(content);
+                }
+                else
+                {
+                    throw new Exception(response.StatusCode.ToString());
+                }
 
-        public async Task <List<RecipesDTO>> GetList()
-        {
-            var result = new List<RecipesDTO>();
-            var response = await client.GetAsync("/recipes");
-            if (response.IsSuccessStatusCode)
-            {        
-                result = await response.Content.ReadAsStringAsync<List<RecipesDTO>>();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
             }
             return result;
         }
 
-        public bool Update(RecipesDTO item)
+        public async Task<List<RecipesDTO>> GetList()
         {
-            throw new NotImplementedException();
+            var result = new List<RecipesDTO>();
+            try
+            {
+                var response = await client.GetAsync(RecipesUri);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    result = JsonConvert.DeserializeObject<List<RecipesDTO>>(content);
+                }
+                else
+                {
+                    throw new Exception(response.StatusCode.ToString());
+                }
+              
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            return result;
+        }
+
+        public async Task<bool> Update(RecipesDTO item)
+        {
+            try
+            {
+                var response = await client.PutAsJsonAsync($"{RecipesUri}/{item.ID}", item);
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
         }
     }
 }

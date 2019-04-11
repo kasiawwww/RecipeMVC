@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Domain.Repositories
 {
-    public class Repo : IRepo<T>
+    public class Repo<T> : IRepo<T>
     {
         public T Add(T item)
         {

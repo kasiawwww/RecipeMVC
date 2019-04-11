@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Domain.Models.DTO;
 
 namespace RecipeMVC.Data
 {
@@ -12,5 +13,6 @@ namespace RecipeMVC.Data
             : base(options)
         {
         }
+        public DbSet<Domain.Models.DTO.RecipesDTO> RecipesDTO { get; set; }
     }
 }
