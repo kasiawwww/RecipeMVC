@@ -16,10 +16,14 @@ namespace Domain.Repositories
         const string RecipesUri = "Recipes";
         public RecipesRepo()
         {
-            client.BaseAddress = new Uri("http://localhost:48791/Api/");
+            //client.BaseAddress = new Uri("http://localhost:48791/Api/");
+            client.BaseAddress = new Uri("https://recipeapikursnet.azurewebsites.net/api/");
+
             client.DefaultRequestHeaders
                 .Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Add("api-key", "kasia1");
+            // client.DefaultRequestHeaders.Add("api-key", "kasia1");
+            client.DefaultRequestHeaders.Add("api-key", "aaa");
+
         }
         public async Task<RecipesDTO> Add(RecipesDTO item)
         {

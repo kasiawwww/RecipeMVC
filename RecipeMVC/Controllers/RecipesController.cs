@@ -9,6 +9,7 @@ using Domain.Models.DTO;
 using RecipeMVC.Data;
 using Domain.IRepositories;
 using Domain.Repositories;
+using System.IO;
 
 namespace RecipeMVC.Controllers
 {
@@ -65,8 +66,14 @@ namespace RecipeMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Image,Body,CategoryId")] RecipesDTO recipesDTO)
+        public async Task<IActionResult> Create([Bind("ID,Name,Image, ImageFile, Body,CategoryId")] RecipesDTO recipesDTO)
         {
+            if (recipesDTO.ImageFile == null || recipesDTO.ImageFile.Length == 0)
+                return View(recipesDTO);
+
+            await convertToBase64Async(recipesDTO);
+            //recipesDTO.Image = recipesDTO.ImageFile.FileName;
+
             if (ModelState.IsValid)
             {
                 await recipesRepo.Add(recipesDTO);
@@ -74,6 +81,18 @@ namespace RecipeMVC.Controllers
             }
             //ViewData["CategoryId"] = new SelectList(_context.Set<CategoryDTO>(), "ID", "Name", recipesDTO.CategoryId);
             return View(recipesDTO);
+        }
+
+        private static async Task convertToBase64Async(RecipesDTO recipesDTO)
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", recipesDTO.ImageFile.FileName);
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await recipesDTO.ImageFile.CopyToAsync(stream);
+            }
+            var byteArray = await System.IO.File.ReadAllBytesAsync(path);
+            recipesDTO.Image = Convert.ToBase64String(byteArray);
         }
 
         // GET: Recipes/Edit/5
