@@ -1,4 +1,4 @@
-﻿let _id = 0;
+let _id = 0;
 let _controller = ''
 
 function showPopup(id, controller) {
